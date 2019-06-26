@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +13,6 @@ class Section extends Model
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users(){
-        return $this->belongsToMany('App\User','user_section');
+        return $this->belongsToMany('App\Models\User','user_section');
     }
 }

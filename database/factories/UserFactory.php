@@ -1,8 +1,8 @@
 <?php
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
-use App\User;
-use App\Section;
+use App\Models\User;
+use App\Models\Section;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 
@@ -30,7 +30,7 @@ $factory->defineAs(User::class,'users', function (Faker $faker) {
 
 $factory->defineAs(Section::class,'sections', function (Faker $faker) {
     return [
-        'title' => $faker->title,
+        'title' => $faker->company,
         'logo' => "",
         'description' => $faker->paragraph,
     ];
