@@ -14,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-
+        return view('user.index',[
+            'users'=>User::paginate(10)
+        ]);
     }
 
     /**
@@ -24,7 +26,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('user.create');
     }
 
     /**
@@ -35,7 +37,22 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'email' => 'required|email|unique:users',
+            'password' => [
+                'required',
+                'alpha_num',
+                'min:6',             // must be at least 6 characters in length
+            ],
+        ]);
+
+        $data=$request->all();
+        $data['password']=bcrypt($data['password']);
+
+        User::create($data);
+
+        return redirect()->route('user.index');
     }
 
     /**
@@ -57,7 +74,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return view('user.edit',[
+            'user'=>$user
+        ]);
     }
 
     /**
@@ -69,7 +88,17 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name' => 'required|max:255|string',
+            'email' => 'required|email',
+            'password' => $request->password != null ?'alpha_num|min:6':'',
+        ]);
+
+        $data=$request->all();
+        $data['password']=!empty($request->password)?bcrypt($data['password']):$user->password;
+        $user->update($data);
+
+        return redirect()->route('user.index');
     }
 
     /**
@@ -80,6 +109,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+
+        $user->sections()->detach();
+        User::find($user->id)->delete();
+
+        return redirect()->route('user.index');
     }
 }
