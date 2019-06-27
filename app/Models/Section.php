@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
-
+    protected $fillable = array('title','logo','description');
     /**
      * reletions with model User
      *

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Section;
+use App\Models\Section;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SectionController extends Controller
@@ -14,7 +15,9 @@ class SectionController extends Controller
      */
     public function index()
     {
-        //
+        return view('section.index',[
+            'sections'=>Section::with('users')->paginate(4),
+        ]);
     }
 
     /**
@@ -24,7 +27,9 @@ class SectionController extends Controller
      */
     public function create()
     {
-        //
+        return view('section.create',[
+            'users'=>User::all()
+        ]);
     }
 
     /**
@@ -35,7 +40,25 @@ class SectionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255|string',
+            'logo' => 'max:10000|mimes:png,jpeg,jpg',
+            'description' => "min:3|max:1000",
+        ]);
+        $data=$request->all();
+
+        //Image Upload
+        if(!empty($request->logo)){
+            $path=$request->file('logo')->store("","logo");
+            $data['logo']="/storage/logo/".$path;
+        }
+
+        $section=Section::create($data);
+
+        if($request->input('section_user')):
+            $section->users()->attach($request->input('section_user'));
+        endif;
+        return redirect()->route('section.index');
     }
 
     /**
@@ -57,7 +80,10 @@ class SectionController extends Controller
      */
     public function edit(Section $section)
     {
-        //
+        return view('section.edit',[
+            'section'=>$section,
+            'users'=>User::all()
+        ]);
     }
 
     /**
@@ -69,7 +95,28 @@ class SectionController extends Controller
      */
     public function update(Request $request, Section $section)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255|string',
+            'logo' => 'max:10000|mimes:png,jpeg,jpg',
+            'description' => "min:3|max:1000",
+        ]);
+
+        //Upload and Save Image
+        if(!empty($request->logo)){
+            $path=$request->file('logo')->store("","logo");
+            if($section->logo) @unlink(public_path($section->logo));
+            $section->update(['logo'=>"/storage/logo/".$path]);
+        }
+
+
+        $section->update($request->except('logo'));
+
+        //Category
+        $section->users()->detach();
+        if($request->input('section_user')):
+            $section->users()->attach($request->input('section_user'));
+        endif;
+        return redirect()->route('section.index');
     }
 
     /**
@@ -80,6 +127,9 @@ class SectionController extends Controller
      */
     public function destroy(Section $section)
     {
-        //
+        $section->users()->detach();
+        $section->delete();
+
+        return redirect()->route('section.index');
     }
 }

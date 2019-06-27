@@ -8,7 +8,7 @@
                     <div class="card-header">Users</div>
 
                     <div class="card-body">
-                        <form  action="{{route('user.update',$user)}}" method="post" enctype="multipart/form-data">
+                        <form  action="{{route('user.update',$user)}}" method="post">
                             <input type="hidden" name="_method" value="put">
                             @csrf
                             @include('user.partials.form')

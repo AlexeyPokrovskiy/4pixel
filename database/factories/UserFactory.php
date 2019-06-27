@@ -27,7 +27,15 @@ $factory->defineAs(User::class,'users', function (Faker $faker) {
         'remember_token' => Str::random(10),
     ];
 });
-
+$factory->defineAs(User::class,'admin', function (Faker $faker) {
+    return [
+        'name' => "4 Pixel",
+        'email' => "admin@test.loc",
+        'email_verified_at' => now(),
+        'password' => bcrypt("password"), // password
+        'remember_token' => Str::random(10),
+    ];
+});
 $factory->defineAs(Section::class,'sections', function (Faker $faker) {
     return [
         'title' => $faker->company,

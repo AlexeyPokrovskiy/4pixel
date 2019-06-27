@@ -8,7 +8,7 @@
                     <div class="card-header">Users</div>
 
                     <div class="card-body">
-                        <form  action="{{route('user.store')}}" method="post" enctype="multipart/form-data">
+                        <form  action="{{route('user.store')}}" method="post">
                             @csrf
                             @include('user.partials.form')
                         </form>

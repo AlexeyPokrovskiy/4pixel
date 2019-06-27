@@ -18,5 +18,6 @@ class UsersTableSeeder extends Seeder
         factory(App\Models\User::class,'users',15)->create()->each(function ($user) use ($sections){
             $user->sections()->attach($sections[rand(0,count($sections)-1)]);
         });
+        factory(App\Models\User::class,'admin',1)->create();
     }
 }
